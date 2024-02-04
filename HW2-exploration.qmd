@@ -11,6 +11,7 @@ editor_options:
 ```{r}
 # load in libraries ----
 library(tidyverse)
+library(janitor)
 ```
 
 ```{r}
@@ -20,51 +21,58 @@ fourteener_data <- read_csv(here::here("Documents", "eds240","Holt-eds240-HW4", 
 
 ```{r}
 # clean data ----
-
+#this dataset is so small I don't think there is a ton of cleaning to do
+fourteener_clean <- fourteener_data %>% 
+  clean_names()
 ```
 
 ```{r}
-library(viridis)
-ggplot(fourteener_data, aes(x = Lat, y = Long, color = factor(fourteener_data$`Elevation Gain_ft`)))+
+
+ggplot(fourteener_clean, aes(x = lat, y = long, color = factor(elevation_gain_ft)))+
   geom_point()
-  #labs(color = "Legend Title")
 
+ggplot(fourteener_clean, aes(x = isolation_mi, y = traffic_low))+
+  geom_point()
 
 ```
 
 ```{r}
-ggplot(fourteener_data, aes(x = fourteener_data$`Traffic Low`))+
+ggplot(fourteener_clean, aes(x = traffic_low))+
   geom_histogram()
 
-ggplot(fourteener_data, aes(x = fourteener_data$`Traffic High`))+
+ggplot(fourteener_clean, aes(x = traffic_high))+
   geom_histogram()
 
-ggplot(fourteener_data, aes(x = fourteener_data$Isolation_mi))+
+ggplot(fourteener_clean, aes(x = isolation_mi))+
   geom_histogram()
 
-ggplot(fourteener_data, aes(x = fourteener_data$Distance_mi))+
+ggplot(fourteener_clean, aes(x = distance_mi))+
   geom_histogram()
 
-ggplot(fourteener_data, aes(x = fourteener_data$`Elevation Gain_ft`))+
+ggplot(fourteener_clean, aes(x = elevation_gain_ft))+
   geom_histogram()
 
-ggplot(fourteener_data, aes(x = fourteener_data$`Elevation_ft`))+
+ggplot(fourteener_clean, aes(x = elevation_gain_ft))+
   geom_histogram()
 ```
 
 ```{r}
 
-ggplot(fourteener_data, aes(x=`Traffic High`, y=`Elevation_ft`) ) +
+ggplot(fourteener_clean, aes(x=traffic_high, y=elevation_ft) ) +
   geom_point()
 ```
 
 
 1. What have you learned about your data? Have any potentially interesting patterns emerged? (5-8 sentences).
-I haven't noticed any definite patterns with this data. I have found that there are probably various factors that lead certain fourteeners to be more popular or more accessible than others.
+
+I haven't noticed any definite patterns with this data. I have found that there are probably various factors that lead certain fourteeners to be more popular or more accessible than others. I haven' worked with lat and long data much so I thought it would be interesting to see if I could use those variables somehow. The isolation variable is also interesting because I would assume that peaks closer together would receive more traffic. 
 
 2. In HW #1, you outlined some questions that you wanted to answer using these data. Have you made any strides towards answering those questions? If yes, how so? If no, what next steps do you need to take (e.g. I need to create X plot type, I still need to track down Y data, I need to restructure existing data so that you can visualize it in Z ways, etc.)? (8-12 sentences)
 
-
+Yes I have looked at the traffic data and the lat and long data. I still need to figure out how to plot them. I'm thinking I may need to use the other data set I was looking at with more climate related data. I am hoping to continue making plots where I can color the data points by traffic and compare to isolation. Another idea is to compare distance to traffic. I also may take the average between traffic low and traffic high.
 
 
 3. What challenges do you foresee encountering with your data? These can be data wrangling and / or visualization challenges. (4-6 sentences)
+
+I think if I were to map it somehow or do a contour plot with the lat long and elevation data it would be cool to try and visualize that. The only issue I see myself running into is that I have not done a plot like that before. The 2D density plots we looked at in class gave me the idea of using the lat and long data for that type of plot. Because there are only 58 14ers in Colorado and this dataset is so small I think it would make it hard to make conclusions from.
+
