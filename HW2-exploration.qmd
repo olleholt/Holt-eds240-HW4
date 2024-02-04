@@ -1,0 +1,70 @@
+---
+title: "Homework Assignment #2"
+subtitle: "Part 2"
+author: "Olivia Holt"
+date: 2024-02-03
+toc: true
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+# load in libraries ----
+library(tidyverse)
+```
+
+```{r}
+# import data ----
+fourteener_data <- read_csv(here::here("Documents", "eds240","Holt-eds240-HW4", "data", "14er.csv"))
+```
+
+```{r}
+# clean data ----
+
+```
+
+```{r}
+library(viridis)
+ggplot(fourteener_data, aes(x = Lat, y = Long, color = factor(fourteener_data$`Elevation Gain_ft`)))+
+  geom_point()
+  #labs(color = "Legend Title")
+
+
+```
+
+```{r}
+ggplot(fourteener_data, aes(x = fourteener_data$`Traffic Low`))+
+  geom_histogram()
+
+ggplot(fourteener_data, aes(x = fourteener_data$`Traffic High`))+
+  geom_histogram()
+
+ggplot(fourteener_data, aes(x = fourteener_data$Isolation_mi))+
+  geom_histogram()
+
+ggplot(fourteener_data, aes(x = fourteener_data$Distance_mi))+
+  geom_histogram()
+
+ggplot(fourteener_data, aes(x = fourteener_data$`Elevation Gain_ft`))+
+  geom_histogram()
+
+ggplot(fourteener_data, aes(x = fourteener_data$`Elevation_ft`))+
+  geom_histogram()
+```
+
+```{r}
+
+ggplot(fourteener_data, aes(x=`Traffic High`, y=`Elevation_ft`) ) +
+  geom_point()
+```
+
+
+1. What have you learned about your data? Have any potentially interesting patterns emerged? (5-8 sentences).
+I haven't noticed any definite patterns with this data. I have found that there are probably various factors that lead certain fourteeners to be more popular or more accessible than others.
+
+2. In HW #1, you outlined some questions that you wanted to answer using these data. Have you made any strides towards answering those questions? If yes, how so? If no, what next steps do you need to take (e.g. I need to create X plot type, I still need to track down Y data, I need to restructure existing data so that you can visualize it in Z ways, etc.)? (8-12 sentences)
+
+
+
+
+3. What challenges do you foresee encountering with your data? These can be data wrangling and / or visualization challenges. (4-6 sentences)
