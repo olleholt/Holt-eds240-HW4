@@ -1,0 +1,178 @@
+---
+# ~ additional YAML options omitted for brevity ~
+format:
+  html:
+    embed-resources: true
+---
+
+Load Libraries
+
+```{r}
+# load in libraries ----
+library(tidyverse)
+library(janitor)
+library(dplyr)
+library(ggplot2)
+library(maps) 
+```
+
+Load in Data
+
+```{r}
+data_wd <- "/Users/oliviaholt/Documents/eds240/Holt-eds240-HW4/data"
+# import data ----
+fourteener_data <- read_csv(file.path(data_wd, "14er.csv"))
+```
+
+Clean Data
+
+```{r}
+# clean data ----
+fourteener_clean <- fourteener_data %>% 
+  clean_names()
+```
+
+**Which option do you plan to pursue:** Option 1
+
+**Restate your question. Has this changed at all since HW #1:**
+
+What makes a route the most popular in high traffic? prominence, isolation, elevation etc.
+
+**Explain which variables from your data set(s) you will use to answer your question(s):**
+
+traffic (high), elevation gain, prominence, distance, latitude, longitude.
+
+**In HW #2, you should have created some exploratory data viz to better understand your data. You may already have some ideas of how you plan to formally visualize your data, but it’s *incredibly* helpful to look at visualizations by other creators for inspiration. Find at least two data visualizations that you could (potentially) borrow / adapt pieces from. Link to them or download and embed them into your `.qmd` file, and explain which elements you might borrow (e.g. the graphic form, legend design, layout, etc.).**
+
+The bubble plot I saw from data to viz and thought it would be a minimal but effective way to show my question. And the ternary plot from discussion I really liked so I wanted to try one of those.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-align: "center"
+#| out-width: "100%"
+#| fig-alt: "Alt text here"
+knitr::include_graphics(here::here("bubbleplot.png"))
+knitr::include_graphics(here::here("plotternary.png"))
+
+```
+
+**Hand-draw your anticipated three visualizations (option 1) or infographic (option 2). Take a photo of your drawing and embed it in your rendered `.qmd` file – note that these are not *exploratory* visualizations, but rather your plan for your final visualizations that you will eventually polish and submit with HW #4.**
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-align: "center"
+#| out-width: "100%"
+#| fig-alt: "Alt text here"
+knitr::include_graphics(here::here("scatter_copy.png"))
+knitr::include_graphics(here::here("ternary_draw_copy.png"))
+```
+
+
+```{r}
+#BUBBLE PLOT
+
+# Libraries
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+library(viridis)
+
+# The dataset is provided in the gapminder library
+#library(gapminder)
+#data <- gapminder %>% filter(year=="2007") %>% dplyr::select(-year)
+
+# Most basic bubble plot
+fourteener_clean %>%
+  #arrange(desc(isolation_mi)) %>%
+  #mutate(country = factor(country, country)) %>%
+  ggplot(aes(x=elevation_gain_ft, y=traffic_high, size=isolation_mi, fill=difficulty)) +
+    geom_point(alpha=0.5, shape=21, color="black") +
+    scale_size(range = c(.1, 24), name="") +
+    scale_fill_viridis(discrete=TRUE, guide=FALSE, option="A") +
+    theme_ipsum() +
+    theme(legend.position="bottom") +
+    ylab("Elevation Gain (ft)") +
+    xlab("Traffic (high)") +
+    theme(legend.position = "none")
+
+
+#put labels on most popular peaks
+```
+
+```{r}
+# # load ggplot2
+# library(ggplot2)
+# library(hrbrthemes)
+# 
+# # Transparency
+# ggplot(fourteener_clean, aes(x=traffic_high, y=elevation_gain_ft, alpha=difficulty)) + 
+#     geom_point(size=6, color="#69b3a2") +
+#     theme_ipsum()
+```
+
+```{r}
+library(ggtern)
+
+# Create bins for 'isolation_mi'
+fourteener_clean$isolation_bin <- cut(fourteener_clean$isolation_mi, breaks = c(0, 20, 40, 60, 80, 100, 120), labels = c("0-175", "176-350", "351-525", "526-700", "more", "and more"))
+
+# Create a ternary plot
+ternary_plot <- ggtern(data = fourteener_clean, aes(x = traffic_high,
+                                                    y = elevation_gain_ft,
+                                                    z = prominence_ft,
+                                                    size = distance_mi,
+                                                    fill = isolation_bin)) +
+  geom_point(alpha = 0.5, shape = 21, color = "black") +
+  scale_size(range = c(2, 8), name = "") +
+  #scale_fill_viridis(discrete = TRUE, guide = FALSE, option = "A") +
+  theme_ipsum() +
+  theme(legend.position = "bottom") +
+  ylab("Elevation Gain (ft)") +
+  xlab("Traffic (high)") +
+  theme(legend.position = "none")
+
+# Print the ternary plot
+print(ternary_plot)
+```
+
+```{r}
+# load United States state map data
+MainStates <- map_data("state")
+st_CO <- MainStates %>% 
+  filter(region == "colorado")
+
+# read the state population data
+StatePopulation <- read.csv("https://raw.githubusercontent.com/ds4stats/r-tutorials/master/intro-maps/data/StatePopulation.csv", as.is = TRUE)
+
+#plot all states with ggplot2, using black borders and light blue fill
+ggplot() + 
+  geom_polygon(data = st_CO, aes(x=long, y=lat, group=group),
+                color="black", fill="tan" )+
+  geom_point(data = fourteener_clean, aes(x = long, y = lat,
+                                          #size = traffic_high,
+                                          fill = difficulty), #changed from isolation_mi to difficulty
+                                          #maybe bin the isolation data and then change fill the isolation
+             alpha=0.5, shape=21, color="black", size = 4)+
+  #scale_size(range = c(6, 8), name="Traffic (high)") +
+    scale_fill_viridis(discrete=TRUE, guide=FALSE, option="A") +
+    theme_ipsum() +
+    theme(legend.position="bottom") +
+    ylab("Latitude") +
+    xlab("Longitude") +
+    theme(legend.position = "none")
+
+```
+
+-   **What challenges did you encounter or anticipate encountering as you continue to build / iterate on your visualizations in R?**
+
+Having multiple legends and how to select one legend while leaving another one out. Also there are so many options and ways to change the visuals of a plot its hard to know what will work. The axes on the ternary plot is also giving me trouble.
+
+-   **What ggplot extension tools / packages do you need to use to build your visualizations? Are there any that we haven’t covered in class that you’ll be learning how to use for your visualizations?**
+
+Tidyverse, janitor, dplyr, ggplot2, maps and ggtern. I think we have used all of these in class except for ggtern which I used for the ternary plot.
+
+-   **What feedback do you need from the instructional team and / or your peers to ensure that your intended message is clear?**
+
+Maybe for the color palette or the binning of data specifically for the size argument in aes().

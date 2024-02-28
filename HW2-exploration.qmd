@@ -1,12 +1,10 @@
 ---
-title: "Homework Assignment #2"
-subtitle: "Part 2"
+title: "oliviaholt_hw2_exploration"
 author: "Olivia Holt"
-date: 2024-02-03
-toc: true
-format: html
-editor_options: 
-  chunk_output_type: console
+date: 2024-02-12
+format:
+  html:
+    embed-resources: true
 ---
 
 ## Load in Libraries
@@ -20,8 +18,9 @@ library(janitor)
 ## Import Data
 
 ```{r}
+data_wd <- "/Users/oliviaholt/Documents/eds240/Holt-eds240-HW4/data"
 # import data ----
-fourteener_data <- read_csv(here::here("data", "14er.csv"))
+fourteener_data <- read_csv(file.path(data_wd, "14er.csv"))
 ```
 
 ## Data Cleaning
@@ -83,3 +82,38 @@ Yes I have looked at the traffic data and the lat and long data. I still need to
 3.  What challenges do you foresee encountering with your data? These can be data wrangling and / or visualization challenges. (4-6 sentences)
 
 I think if I were to map it somehow or do a contour plot with the lat long and elevation data it would be cool to try and visualize that. The only issue I see myself running into is that I have not done a plot like that before. The 2D density plots we looked at in class gave me the idea of using the lat and long data for that type of plot. Because there are only 58 14ers in Colorado and this dataset is so small I think it would make it hard to make conclusions from.
+
+```{r}
+ggplot(fourteener_clean, aes(x = long, y = lat, color = factor(traffic_high)))+
+  geom_point()+ theme(
+    legend.position='none'
+  )
+```
+
+```{r}
+# Area + contour
+ggplot(fourteener_clean, aes(x= long, y= lat) ) +
+  stat_density_2d(aes(fill = elevation_gain_ft), geom = "contour", colour="blue")
+```
+
+```{r}
+ggplot(fourteener_clean, aes(x = long, y = lat)) +
+  stat_density_2d(aes(fill = elevation_gain_ft), geom = "polygon", color = "blue") +
+  geom_contour(aes(z = elevation_gain_ft), color = "black") +
+  labs(title = "2D Density Plot with Contours",
+       x = "Longitude",
+       y = "Latitude",
+       fill = "Elevation Gain (ft)")
+
+```
+
+```{r}
+ggplot(fourteener_clean, aes(x = long, y = lat)) +
+  stat_density_2d(aes(fill = elevation_gain_ft), geom = "contour", color = "blue", bins = 40) +
+  geom_contour(aes(z = elevation_gain_ft), color = "white") +
+  labs(title = "2D Density Plot with Contours",
+       x = "Longitude",
+       y = "Latitude",
+       fill = "Elevation Gain (ft)")
+
+```
