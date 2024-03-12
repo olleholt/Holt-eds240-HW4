@@ -205,7 +205,7 @@ ternary_plot <- ggtern(data = fourteener_clean,
                                "Hard Class 3" = "#376597FF", "Class 4" = "#9888A5FF"))
 
 # Print the ternary plot
-ternary_plot
+#ternary_plot
 
 
 #ggsave("tern_plot.png", plot = ternary_plot2, device = "png", width = 8, height = 6)
@@ -249,7 +249,7 @@ tern_plot <- ggtern(data = fourteener_20,
                                "Hard Class 3" = "#376597FF", "Class 4" = "#9888A5FF"))
 
 # Print the ternary plot
-tern_plot
+#tern_plot
 
 
 #ggsave("tern_plot.png", plot = tern_plot, device = "png", width = 8, height = 6)
@@ -279,12 +279,12 @@ MainStates <- map_data("state")
 st_CO <- MainStates %>% 
   filter(region == "colorado")
 
-#using the OSM package to view the main roads in colorado
-big_streets <- getbb("Colorado United States")%>%
-  opq()%>%
-  add_osm_feature(key = "highway", 
-                  value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
-  osmdata_sf()
+# #using the OSM package to view the main roads in colorado
+# big_streets <- getbb("Colorado United States")%>%
+#   opq()%>%
+#   add_osm_feature(key = "highway", 
+#                   value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
+#   osmdata_sf()
 ```
 
 ```{r warning=FALSE}
@@ -308,7 +308,7 @@ map_plot_0 <- ggplot() +
   ylab("Latitude") +
   xlab("Longitude") +
   ggtitle("Colorado")+
-  geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
+  #geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
   theme_minimal()+
   labs()
 
@@ -345,7 +345,7 @@ map_plot_1 <- ggplot() +
   ylab("Latitude") +
   xlab("Longitude") +
   ggtitle("Colorado") +
-  geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
+  #geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
   theme_minimal() +
   labs()
 
@@ -356,10 +356,13 @@ map_plot_1 <- ggplot() +
 #| warning: false
 #| error: false
 
+# Filter the mt. bierstadt in the dataset
+mt_bierstadt <- tail(fourteener_20, 1)
+
 map_plot_2 <- ggplot() + 
   geom_polygon(data = st_CO, aes(x = long, y = lat, group = group),
                color = "black", fill = "white") +
-    geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
+  #geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
   geom_point(data = fourteener_20,
              aes(x = long, y = lat, fill = difficulty),
              alpha = 0.8, shape = 24, color = "black", size = 5) +
@@ -397,7 +400,7 @@ denver_lat <- 39.742043
 denver_long <- -104.991531
 
 # Add Denver point to the plot with a specific color
-map_plot_den <- map_plot2 +
+map_plot_den <- map_plot_2 +
   geom_point(data = data.frame(lon = denver_long, lat = denver_lat), 
              aes(x = lon, y = lat, color = "Denver"), size = 2) +
   scale_color_manual(values = "red", name = "City")
