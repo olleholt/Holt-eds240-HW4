@@ -2,7 +2,7 @@
 # ~ additional YAML options omitted for brevity ~
 title: "Data Viz Homework 4"
 author: "Olivia Holt"
-data: 03-10-2024
+data: 03-12-2024
 format:
   html:
     embed-resources: true
