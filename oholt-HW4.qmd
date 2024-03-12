@@ -6,6 +6,8 @@ data: 03-10-2024
 format:
   html:
     embed-resources: true
+    code-fold: true
+    code-summary: "Show the code"
 ---
 
 # Data
@@ -46,7 +48,20 @@ In Colorado, and in this dataset, there are 58 peaks over 14,000 feet. Five of t
 
 -   **Isolation_mi** – the distance in miles from the nearest point of the same or higher elevation
 
-Load Libraries
+```{r}
+#| warning: false
+#| error: false
+
+#| eval: true
+#| echo: false
+#| fig-align: "center"
+#| out-width: "100%"
+#| fig-alt: "Alt text here"
+knitr::include_graphics(here::here("Colorado14nerPopularity.png"))
+
+```
+
+# Load Libraries
 
 ```{r warning=FALSE}
 #| warning: false
@@ -70,7 +85,7 @@ library(viridis)
 library(ggtern)
 ```
 
-Load in Data
+# Load in Data
 
 ```{r warning=FALSE}
 #| warning: false
@@ -81,7 +96,7 @@ data_wd <- "/Users/oliviaholt/Documents/eds240/Holt-eds240-HW4/data"
 fourteener_data <- read_csv(file.path(data_wd, "14er.csv"), show_col_types = FALSE)
 ```
 
-Clean Data
+# Clean Data
 
 ```{r warning=FALSE}
 #| warning: false
@@ -114,17 +129,19 @@ fourteener_20 <- fourteener_clean %>%
   tail(20)
 ```
 
+# Bar Plot
+
 ```{r warning=FALSE}
 #| warning: false
 #| error: false
 
-#filter to show top 20 most visited peaks
+#use subset of top 20 most visited peaks
 col_plot <- fourteener_clean %>%
   tail(20) %>% 
   ggplot() +
   geom_col(aes(y = reorder(mountain_peak, traffic_high), #change into ascending order for mountain peak by traffic
                x = traffic_high, fill = difficulty))+
-  xlab("High Traffic Estimate") +
+  xlab("Popularity by Traffic Estimate") +
   ylab("")+
   ggtitle(" ")+
   #get rid of grey background, fill with white
@@ -132,14 +149,20 @@ col_plot <- fourteener_clean %>%
         #creating horizontal axis grid lines
         panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
         # Only left line of the vertical axis is painted in black
-        axis.line.y.left = element_line(color = "black"))+
+        axis.line.y.left = element_line(color = "black"),
+        # increase font size for x and y-axis labels
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_text(size = 14))+
   scale_fill_paletteer_d("nationalparkcolors::CraterLake")+
   labs(fill = "Difficulty Level")  # Change the legend title here
 
 col_plot
 
-ggsave("col_plot.png", plot = col_plot, device = "png", width = 8, height = 6)
+#ggsave("col_plot.png", plot = col_plot, device = "png", width = 8, height = 6)
 ```
+
+# Ternary Plot
 
 ```{r warning=FALSE}
 #| warning: false
@@ -147,11 +170,11 @@ ggsave("col_plot.png", plot = col_plot, device = "png", width = 8, height = 6)
 
 
 # Create a ternary plot with specified axis limits
-ternary_plot2 <- ggtern(data = fourteener_clean, 
+ternary_plot <- ggtern(data = fourteener_clean, 
                        aes(x = traffic_high,
                            y = elevation_gain_ft,
                            z = prominence_ft,
-                           fill = as.factor(new_difficulty))) +
+                           fill = difficulty)) +
   
   # Add points to the plot with specified attributes
   geom_point(alpha = 0.5, shape = 21, color = "black", size = 4) +
@@ -160,7 +183,7 @@ ternary_plot2 <- ggtern(data = fourteener_clean,
   theme_bvbw(base_size = 12) +
   
   # Adjust the legend position
-  theme(legend.position = "bottom",axis.title = element_text(size = 10)) +
+  theme(legend.position = "bottom",axis.title = element_text(size = 9)) +
   
   # Label the axes
   ylab("Elevation Gain (ft)") +
@@ -177,17 +200,75 @@ ternary_plot2 <- ggtern(data = fourteener_clean,
    #Customize the legend title and appearance
   
   # Use scale_fill_manual to set custom colors for each difficulty level
-  scale_fill_manual(values = c("1" = "#7DCCD3FF", "2" = "#4E7147FF", 
-                               "3" = "#BE9C9DFF", "4" = "#F7ECD8FF",
-                               "5" = "#376597FF", "6" = "#9888A5FF"))
+  scale_fill_manual(values = c("Class 1" = "#7DCCD3FF", "Class 2" = "#4E7147FF", 
+                               "Easy Class 3" = "#BE9C9DFF", "Class 3" = "#F7ECD8FF",
+                               "Hard Class 3" = "#376597FF", "Class 4" = "#9888A5FF"))
 
 # Print the ternary plot
-ternary_plot2
+ternary_plot
 
 
 #ggsave("tern_plot.png", plot = ternary_plot2, device = "png", width = 8, height = 6)
 
 ```
+
+```{r}
+# Create a ternary plot with specified axis limits
+tern_plot <- ggtern(data = fourteener_20, 
+                       aes(x = traffic_high,
+                           y = elevation_gain_ft,
+                           z = prominence_ft,
+                           fill = difficulty)) +
+  
+  # Add points to the plot with specified attributes
+  geom_point(alpha = 0.8, shape = 21, color = "black", size = 4) +
+  
+  # Apply a theme to the plot
+  theme_bvbw(base_size = 12) +
+  
+  # Adjust the legend position
+  theme(legend.position = "bottom",axis.title = element_text(size = 9)) +
+  
+  # Label the axes
+  ylab("Elevation Gain (ft)") +
+  xlab("Traffic") +
+  zlab("Prominence") +
+  
+  # Set the title of the plot
+  labs(title = " ")+
+  
+   # Customize the legend title and appearance
+   guides(fill = guide_legend(title = "Difficulty Level")) +
+   theme(legend.key = element_rect(fill = "white", color = "white"),
+         legend.title = element_text(size = 10))+  # customizing legend box color
+   #Customize the legend title and appearance
+  
+  # Use scale_fill_manual to set custom colors for each difficulty level
+  scale_fill_manual(values = c("Class 1" = "#7DCCD3FF", "Class 2" = "#4E7147FF", 
+                               "Easy Class 3" = "#BE9C9DFF", "Class 3" = "#F7ECD8FF",
+                               "Hard Class 3" = "#376597FF", "Class 4" = "#9888A5FF"))
+
+# Print the ternary plot
+tern_plot
+
+
+#ggsave("tern_plot.png", plot = tern_plot, device = "png", width = 8, height = 6)
+```
+
+```{r}
+#| warning: false
+#| error: false
+
+# Add points to show where the other 38 fourteeners are
+tern_plot_2 <- tern_plot +
+  geom_point(data = fourteener_clean, alpha = 0.5, shape = 1, color = "black", size = 4)
+
+tern_plot_2
+
+ggsave("tern_plot_2.png", plot = tern_plot_2, device = "png", width = 8, height = 6)
+```
+
+# **Map**
 
 ```{r warning=FALSE}
 #| warning: false
@@ -204,6 +285,14 @@ big_streets <- getbb("Colorado United States")%>%
   add_osm_feature(key = "highway", 
                   value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
   osmdata_sf()
+```
+
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
+# Filter the last five points in the dataset
+last_five <- tail(fourteener_20, 5)
 
 map_plot<-ggplot() + 
   geom_polygon(data = st_CO, aes(x = long, y = lat, group = group),
@@ -211,50 +300,122 @@ map_plot<-ggplot() +
   geom_point(data = fourteener_20,
              aes(x = long, y = lat, fill = difficulty),
              alpha = 0.5, shape = 24, color = "black", size = 5) +
+  geom_text(data = fourteener_20,
+            aes(x = long, y = lat, label = mountain_peak),
+            vjust = 1.5, size = 3, color = "black") +  # Add labels
   scale_fill_viridis(discrete = TRUE, guide = "legend", option = "D") +
   theme() +
   ylab("Latitude") +
   xlab("Longitude") +
-  ggtitle("Map of Colorado 14ner's by difficulty")+
+  ggtitle("Colorado")+
   geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
   theme_minimal()+
   labs()
 
 map_plot
 
-#find a way to point out the ten most visited peaks
-ggsave("map_plot.png", plot = map_plot, device = "png", width = 8, height = 6)
 ```
 
 ```{r}
 #| warning: false
 #| error: false
 
-# #BAR PLOT
-# 
-# # Libraries
-# library(ggplot2)
-# library(dplyr)
-# library(hrbrthemes)
-# library(viridis)
-# 
-# # Most basic bubble plot
-# bar_plot <- fourteener_clean %>%
-#   ggplot(aes(x=mountain_range)) +
-#     geom_bar(alpha=0.5, color="black") +
-#     theme_ipsum()+
-#     theme(legend.position="bottom") +
-#     xlab("Mountain Range") +
-#     theme(legend.position = "none")+
-#   ggtitle("Count of 14ner's in each mountain range")+
-#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-# 
-# bar_plot
-# #group by mountain range and high traffic?
-# #group by mountain range and difficulty?
-# 
-# #ggsave("bar_plot.png", plot = bar_plot, device = "png", width = 8, height = 6)
+
+# Assuming your data frame is named 'fourteener_20'
+# You can replace it with your actual data frame name
+
+# Filter the last five points in the dataset
+last_five <- tail(fourteener_20, 5)
+
+map_plot <- ggplot() + 
+  geom_polygon(data = st_CO, aes(x = long, y = lat, group = group),
+               color = "black", fill = "white") +
+  geom_point(data = fourteener_20,
+             aes(x = long, y = lat, fill = difficulty),
+             alpha = 0.5, shape = 24, color = "black", size = 5) +
+  geom_label(data = last_five,
+             aes(x = long, y = lat, label = mountain_peak),
+             vjust = 1.5, size = 3, color = "black",
+             label.padding = unit(0.15, "lines"),  # Adjust label padding
+             label.r = unit(0.15, "lines"),         # Adjust label radius
+             label.size = 0.25,
+             nudge_x = 0.1,  # Nudge the labels to the right
+             nudge_y = 0.1) +  # Nudge the labels upward
+  geom_segment(data = last_five,
+               aes(x = long, y = lat, xend = long, yend = lat, label = mountain_peak),
+               color = "black", size = 0.5, alpha = 0.5, lineend = "round") +  # Add connecting lines
+  scale_fill_viridis(discrete = TRUE, guide = "legend", option = "D") +
+  theme() +
+  ylab("Latitude") +
+  xlab("Longitude") +
+  ggtitle("Colorado") +
+  geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
+  theme_minimal() +
+  labs()
+
+map_plot
 ```
+
+```{r}
+#| warning: false
+#| error: false
+
+map_plot2 <- ggplot() + 
+  geom_polygon(data = st_CO, aes(x = long, y = lat, group = group),
+               color = "black", fill = "white") +
+    geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
+  geom_point(data = fourteener_20,
+             aes(x = long, y = lat, fill = difficulty),
+             alpha = 0.8, shape = 24, color = "black", size = 5) +
+  geom_label(data = mt_bierstadt,
+             aes(x = long + 0.1, y = lat + 0.1, label = mountain_peak),
+             vjust = 1.5, size = 3, color = "black",
+             label.padding = unit(0.15, "lines"),  # Adjust label padding
+             label.r = unit(0.15, "lines"),         # Adjust label radius
+             label.size = 0.25,
+             nudge_x = 2.5,  # Nudge the labels to the right
+             nudge_y = -1) +  # Nudge the labels upward)
+  geom_segment(data = mt_bierstadt,
+               aes(x = long, y = lat, xend = long + 2.5, yend = lat + -1),
+               color = "black", size = 0.5, alpha = 1, lineend = "round") +  # Add connecting line to mt bierstadt
+  scale_fill_paletteer_d("nationalparkcolors::CraterLake", name = "Difficulty Level") +
+  labs(title = "") +  # Empty title
+  theme(axis.title.x = element_blank(),  # Remove x-axis title
+        axis.title.y = element_blank(),  # Remove y-axis title
+        axis.text.x = element_blank(),   # Remove x-axis labels
+        axis.text.y = element_blank(),   # Remove y-axis labels
+        axis.ticks.x = element_blank(),   # Remove x-axis ticks
+        axis.ticks.y = element_blank())+   # Remove y-axis ticks
+  theme_void()
+
+map_plot2
+
+#ggsave("map_plot2.png", plot = map_plot2, device = "png", width = 8, height = 6)
+
+```
+
+```{r}
+#| warning: false
+#| error: false
+
+# Coordinates for Denver
+denver_lat <- 39.742043
+denver_long <- -104.991531
+
+# Add Denver point to the plot with a specific color
+map_plot_den <- map_plot2 +
+  geom_point(data = data.frame(lon = denver_long, lat = denver_lat), 
+             aes(x = lon, y = lat, color = "Denver"), size = 2) +
+  scale_color_manual(values = "red", name = "City")
+
+# Print the plot
+map_plot_den
+
+#ggsave("map_plot_den.png", plot = map_plot_den, device = "png", width = 8, height = 6)
+
+```
+
+Write Up:
 
 1.  clearly state your question(s):
 
