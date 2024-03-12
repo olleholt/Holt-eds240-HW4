@@ -67,6 +67,7 @@ library(ggmap)
 library(osmdata)
 library(grid)
 library(viridis)
+library(ggtern)
 ```
 
 Load in Data
@@ -117,34 +118,6 @@ fourteener_20 <- fourteener_clean %>%
 #| warning: false
 #| error: false
 
-#BUBBLE PLOT
-
-# # Libraries
-# library(ggplot2)
-# library(dplyr)
-# library(hrbrthemes)
-# library(viridis)
-# 
-# # Most basic bubble plot
-# fourteener_clean %>%
-#   ggplot(aes(x=elevation_ft, y=traffic_high, size=new_difficulty, fill=difficulty)) +
-#     geom_point(alpha=0.5, shape=21, color="black") +
-#     scale_size(range = c(4, 16), name="") +
-#     scale_fill_viridis(discrete=TRUE, guide=FALSE, option="A") +
-#     theme_ipsum() +
-#     theme(legend.position="bottom") +
-#     ylab("Elevation (ft)") +
-#     xlab("Traffic (high)") +
-#     theme(legend.position = "none")
-# 
-# 
-# #put labels on most popular peaks
-```
-
-```{r}
-library(grid)
-library(tidyverse)
-
 #filter to show top 20 most visited peaks
 col_plot <- fourteener_clean %>%
   tail(20) %>% 
@@ -173,28 +146,6 @@ ggsave("col_plot.png", plot = col_plot, device = "png", width = 8, height = 6)
 #| error: false
 
 
-# library(ggtern)
-# 
-# # Create a ternary plot
-# ternary_plot <- ggtern(data = fourteener_clean, aes(x = traffic_high,
-#                                                     y = elevation_gain_ft,
-#                                                     z = prominence_ft,
-#                                                     #size = distance_mi,
-#                                                     fill = new_difficulty)) +
-#   geom_point(alpha = 0.5, shape = 21, color = "black", size = 2) +
-#   scale_size(range = c(2, 8), name = "") +
-#   theme_ipsum() +
-#   theme(legend.position = "bottom") +
-#   ylab("Elevation Gain (ft)") +
-#   xlab("Traffic (high)")
-# 
-# # Print the ternary plot
-# ternary_plot
-```
-
-```{r}
-library(ggtern)
-
 # Create a ternary plot with specified axis limits
 ternary_plot2 <- ggtern(data = fourteener_clean, 
                        aes(x = traffic_high,
@@ -206,7 +157,7 @@ ternary_plot2 <- ggtern(data = fourteener_clean,
   geom_point(alpha = 0.5, shape = 21, color = "black", size = 4) +
   
   # Apply a theme to the plot
-  theme_bvbw() +
+  theme_bvbw(base_size = 12) +
   
   # Adjust the legend position
   theme(legend.position = "bottom",axis.title = element_text(size = 10)) +
@@ -220,7 +171,7 @@ ternary_plot2 <- ggtern(data = fourteener_clean,
   labs(title = " ")+
   
    # Customize the legend title and appearance
-   guides(fill = guide_legend(title = "New Difficulty")) +
+   guides(fill = guide_legend(title = "Difficulty Level")) +
    theme(legend.key = element_rect(fill = "white", color = "white"),
          legend.title = element_text(size = 10))+  # customizing legend box color
    #Customize the legend title and appearance
@@ -305,21 +256,6 @@ ggsave("map_plot.png", plot = map_plot, device = "png", width = 8, height = 6)
 # #ggsave("bar_plot.png", plot = bar_plot, device = "png", width = 8, height = 6)
 ```
 
-```{r}
-scat_plot<- ggplot(data = subset(fourteener_clean, fourteener == "Y"),
-       aes(x = difficulty, y = traffic_high, color = elevation_gain_ft)) +
-  geom_point(size = 3) +
-  labs(title = "Traffic vs. Difficulty for Fourteeners",
-       x = "Difficulty",
-       y = "Traffic (High Estimate)") +
-  #scale_color_gradient(name = "Elevation Gain (ft)", low = "cornflowerblue", high = "yellow")
-  scale_color_viridis(discrete = FALSE, guide = "legend", option = "D")+
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-scat_plot
-```
-
 1.  clearly state your question(s):
 
     My question is 'What makes a 14ner popular? with this dataset in particular I am looking at elevation, traffic (high), difficulty, mountain range.
@@ -343,60 +279,3 @@ What makes a 14ner the most popular (measured as high traffic)?
 **Explain which variables from your data set(s) you will use to answer your question(s):**
 
 traffic (high), elevation gain, prominence, distance, latitude, longitude, mtn range, mtn peak.
-
-```{r}
-# Libraries
-library(ggplot2)
-library(dplyr)
- 
-# Get the world polygon and extract UK
-library(maps)
-library(mapdata)
-
-CO_map <- map_data("state") %>% filter(region=="CO")
-
-# Get a data frame with longitude, latitude, and size of bubbles (a bubble = a city)
-data <- world.cities %>% filter(country.etc=="UK")
-
-# Left chart
-ggplot() +
-  geom_polygon(data = UK, aes(x=long, y = lat, group = group), fill="grey", alpha=0.3) +
-  geom_point( data=data, aes(x=long, y=lat)) +
-  theme_void() + ylim(50,59) + coord_map() 
- 
-# Second graphic with names of the 10 biggest cities
-library(ggrepel)
-ggplot() +
-  geom_polygon(data = UK, aes(x=long, y = lat, group = group), fill="grey", alpha=0.3) +
-  geom_point( data=data, aes(x=long, y=lat, alpha=pop)) +
-  geom_text_repel( data=data %>% arrange(pop) %>% tail(10), aes(x=long, y=lat, label=name), size=5) +
-  geom_point( data=data %>% arrange(pop) %>% tail(10), aes(x=long, y=lat), color="red", size=3) +
-  theme_void() + ylim(50,59) + coord_map() +
-  theme(legend.position="none")
-```
-
-```{r}
-# library(ggmap)
-# #citation("ggmap")
-# 
-# min(fourteener_clean$lat)
-# #37.1224
-# max(fourteener_clean$lat)
-# #40.255
-# 
-# min(fourteener_clean$long)
-# #-108.0053
-# max(fourteener_clean$long)
-# #-105.0442
-# 
-# mean(fourteener_clean$lat)
-# #38.59047
-# mean(fourteener_clean$long)
-# #-106.4821
-# 
-# get_googlemap(center = c(-106.4821, 38.59047), zoom = 15) %>% 
-#   ggmap() +
-#   geom_point(data = fourteener_clean, mapping = aes(x = lon, y = lat), color = "red") +
-#   geom_text(data = fourteener_clean, aes(label = name), angle = 60, hjust = 0, 
-#             color = "yellow", nudge_x = .0001, nudge_y = .0004, size = 4.5)
-```
