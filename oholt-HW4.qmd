@@ -294,7 +294,7 @@ big_streets <- getbb("Colorado United States")%>%
 # Filter the last five points in the dataset
 last_five <- tail(fourteener_20, 5)
 
-map_plot<-ggplot() + 
+map_plot_0 <- ggplot() + 
   geom_polygon(data = st_CO, aes(x = long, y = lat, group = group),
                color = "black", fill = "white")+
   geom_point(data = fourteener_20,
@@ -312,7 +312,7 @@ map_plot<-ggplot() +
   theme_minimal()+
   labs()
 
-map_plot
+#map_plot_0
 
 ```
 
@@ -320,14 +320,10 @@ map_plot
 #| warning: false
 #| error: false
 
-
-# Assuming your data frame is named 'fourteener_20'
-# You can replace it with your actual data frame name
-
 # Filter the last five points in the dataset
 last_five <- tail(fourteener_20, 5)
 
-map_plot <- ggplot() + 
+map_plot_1 <- ggplot() + 
   geom_polygon(data = st_CO, aes(x = long, y = lat, group = group),
                color = "black", fill = "white") +
   geom_point(data = fourteener_20,
@@ -353,14 +349,14 @@ map_plot <- ggplot() +
   theme_minimal() +
   labs()
 
-map_plot
+#map_plot_1
 ```
 
 ```{r}
 #| warning: false
 #| error: false
 
-map_plot2 <- ggplot() + 
+map_plot_2 <- ggplot() + 
   geom_polygon(data = st_CO, aes(x = long, y = lat, group = group),
                color = "black", fill = "white") +
     geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
@@ -388,9 +384,7 @@ map_plot2 <- ggplot() +
         axis.ticks.y = element_blank())+   # Remove y-axis ticks
   theme_void()
 
-map_plot2
-
-#ggsave("map_plot2.png", plot = map_plot2, device = "png", width = 8, height = 6)
+#map_plot_2
 
 ```
 
@@ -415,28 +409,12 @@ map_plot_den
 
 ```
 
-Write Up:
+# Write Up
 
-1.  clearly state your question(s):
+My question is 'What makes a fourteener (14ner) the most popular’? With this dataset in particular I am looking at elevation gain of the hike in feet, high traffic estimates for 2017, difficulty level of the hike, and the individual peaks. The dataset has average values for the entire year of 2017. The difficulty levels range from Class 1, Class 2, Easy Class 3, Class 3, Hard Class 3, and Class 4.
 
-    My question is 'What makes a 14ner popular? with this dataset in particular I am looking at elevation, traffic (high), difficulty, mountain range.
+This tidy dataset is from Kaggle and it lists mountain peaks rising to an elevation greater than 14,000 ft (otherwise known as a fourteener) located in Colorado. Other than being 14,000 ft tall to be a 14ner, the prominence of the peak has to be at least 300 feet higher than the saddle that is connecting it to a neighboring peak. There are 58 peaks over 14,000 feet in Colorado and five of those peaks do not meet the prominence rule, but are included in this dataset. The dataset did not need much cleaning and wrangling except for some subsetting, arranging, and renaming.
 
-2.  describe your data (including your data source).
+Initially, I anticipated that elevation/elevation gain, isolation, and difficulty level would have the highest impact on traffic estimates and therefore wanted to focus on those. In hindsight I wish I had found a data set that had the distances from each to Denver as I think that would have a high impact on the popularity. From living in Colorado I remember Mt. Bierstadt being a popular peak because of its accessibility from Denver and it being the 'shortest' 14ner. This also made it the most accessible for people visiting from out of state as it is closer to the airport in Denver and for people not used to the elevation. It also would have been interesting to look at trends for each season as not many people climb in the winter or fall.
 
-    This tidy dataset is from Kaggle and it lists mountain peaks rising to an elevation greater than 14,000 ft (otherwise known as a fourteener) located in Colorado. Other than being 14,000 ft tall to be a 14ner, the prominence of that peak has to be at least 300 feet higher than the saddle that is connecting it to a neighboring peak.
-
-There are 58 peaks over 14,000 feet in Colorado and five of those peaks do not meet the prominence rule, but are in this dataset.
-
-3.  address your approach and decisions for each of the ten design elements listed above (though you are welcome and encouraged to comment on any others that are not explicitly listed). If your visualizations do not include and / or consider a listed element(s), please comment on why (it’s possible that not all will be applicable to your visualizations, but be sure to say why that is the case).
-
-Initially I anticipated that elevation/elevation gain, isolation, and difficulty would have the highest impact on traffic and therefore wanted to focus on those. In hindsight I wish I had found a data set that had the distances from each each to Denver as I think that would have a high impact on the popularity. From living in Colorado I remember Mt. Bierstadt being a popular peak because of its accessibility from Denver and it being the 'shortest' 14ner. This also made it the most accessible for people visiting from out of state as its closer to the airport in Denver and for people not use to the elevation. It also would have been interesting to look at trends for each season as not many people climb in the winter or fall.
-
-**Which option do you plan to pursue:** Option 2
-
-**Restate your question. Has this changed at all since HW #1:**
-
-What makes a 14ner the most popular (measured as high traffic)?
-
-**Explain which variables from your data set(s) you will use to answer your question(s):**
-
-traffic (high), elevation gain, prominence, distance, latitude, longitude, mtn range, mtn peak.
+Mt. Bierstadt did prove to be the most popular 14ner to climb in 2017 according to the high traffic estimate. When looking at the 20 most popular 14ner’s in 2017 they were all below the ‘Hard Class 3’ difficulty range according to the bar plot. Most of them were close together and closer to Denver, except for Handles peak in the southwest region of Colorado according to the map plot. And compared to the other 14ner’s, they had less elevation gain on the hike according to the ternary plot.
