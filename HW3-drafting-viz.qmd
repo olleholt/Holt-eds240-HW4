@@ -1,5 +1,8 @@
 ---
 # ~ additional YAML options omitted for brevity ~
+title: "homework 3 drafting viz"
+author: "Olivia Holt"
+data: 03-08-2024
 format:
   html:
     embed-resources: true
@@ -7,7 +10,10 @@ format:
 
 Load Libraries
 
-```{r}
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
 # load in libraries ----
 library(tidyverse)
 library(janitor)
@@ -18,7 +24,10 @@ library(maps)
 
 Load in Data
 
-```{r}
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
 data_wd <- "/Users/oliviaholt/Documents/eds240/Holt-eds240-HW4/data"
 # import data ----
 fourteener_data <- read_csv(file.path(data_wd, "14er.csv"))
@@ -26,13 +35,16 @@ fourteener_data <- read_csv(file.path(data_wd, "14er.csv"))
 
 Clean Data
 
-```{r}
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
 # clean data ----
 fourteener_clean <- fourteener_data %>% 
   clean_names()
 ```
 
-**Which option do you plan to pursue:** Option 1
+**Which option do you plan to pursue:** Option 2
 
 **Restate your question. Has this changed at all since HW #1:**
 
@@ -46,7 +58,10 @@ traffic (high), elevation gain, prominence, distance, latitude, longitude.
 
 The bubble plot I saw from data to viz and thought it would be a minimal but effective way to show my question. And the ternary plot from discussion I really liked so I wanted to try one of those.
 
-```{r}
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
 #| eval: true
 #| echo: false
 #| fig-align: "center"
@@ -59,7 +74,10 @@ knitr::include_graphics(here::here("plotternary.png"))
 
 **Hand-draw your anticipated three visualizations (option 1) or infographic (option 2). Take a photo of your drawing and embed it in your rendered `.qmd` file – note that these are not *exploratory* visualizations, but rather your plan for your final visualizations that you will eventually polish and submit with HW #4.**
 
-```{r}
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
 #| eval: true
 #| echo: false
 #| fig-align: "center"
@@ -69,8 +87,10 @@ knitr::include_graphics(here::here("scatter_copy.png"))
 knitr::include_graphics(here::here("ternary_draw_copy.png"))
 ```
 
+```{r warning=FALSE}
+#| warning: false
+#| error: false
 
-```{r}
 #BUBBLE PLOT
 
 # Libraries
@@ -101,7 +121,10 @@ fourteener_clean %>%
 #put labels on most popular peaks
 ```
 
-```{r}
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
 # # load ggplot2
 # library(ggplot2)
 # library(hrbrthemes)
@@ -112,11 +135,15 @@ fourteener_clean %>%
 #     theme_ipsum()
 ```
 
-```{r}
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
+
 library(ggtern)
 
 # Create bins for 'isolation_mi'
-fourteener_clean$isolation_bin <- cut(fourteener_clean$isolation_mi, breaks = c(0, 20, 40, 60, 80, 100, 120), labels = c("0-175", "176-350", "351-525", "526-700", "more", "and more"))
+fourteener_clean$isolation_bin <- cut(fourteener_clean$isolation_mi, breaks = c(0, 20, 40, 60, 80, 100, 120, 140), labels = c("0-175", "176-350", "351-525", "526-700", "more", "and more", "yip"))
 
 # Create a ternary plot
 ternary_plot <- ggtern(data = fourteener_clean, aes(x = traffic_high,
@@ -137,7 +164,11 @@ ternary_plot <- ggtern(data = fourteener_clean, aes(x = traffic_high,
 print(ternary_plot)
 ```
 
-```{r}
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
+
 # load United States state map data
 MainStates <- map_data("state")
 st_CO <- MainStates %>% 

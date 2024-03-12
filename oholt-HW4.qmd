@@ -1,0 +1,402 @@
+---
+# ~ additional YAML options omitted for brevity ~
+title: "Data Viz Homework 4"
+author: "Olivia Holt"
+data: 03-10-2024
+format:
+  html:
+    embed-resources: true
+---
+
+# Data
+
+From Kaggle:
+
+<https://www.kaggle.com/datasets/mikeshout/14erpeaks/data>
+
+### **Context**
+
+This tidy dataset lists mountain peaks rising to an elevation greater than 14,000 ft (4,267 meters) located in the state of Colorado, USA.
+
+The term fourteener refers to mountain peaks with an elevation greater than 14,000 feet (4,267 meters) and a significant prominence. The prominence is generally agreed to be at least 300 feet higher than the saddle that connecting it to a neighboring peak.
+
+In Colorado, and in this dataset, there are 58 peaks over 14,000 feet. Five of those peaks do not meet the prominence rule, so you can filter the list down to the commonly accepted list of 53 Colorado fourteeners.
+
+**Parameters of interest:**
+
+-   **Traffic High\*** – The high range of estimated visits in the year 2017
+
+-   **Lat\*** -The latitudinal coordinate in decimal form
+
+-   **Long\*** - The longitudinal coordinate in decimal form
+
+-   **Mountain Peak** – The name of the peak
+
+-   **Mountain Range** – the name of the primary mountain range the peak is a member of
+
+-   **Elevation_ft** – The peak elevation in feet
+
+-   **Distance_mi** – The distance of the standard route in miles
+
+-   **Elevation Gain_ft** – The elevation gain of the standard route in feet
+
+-   **Difficulty** – The Yosemite Decimal System difficulty rating, a value ranging from Class 1 (easiest) to Class 5 (most difficult)
+
+-   **Prominence_ft** – How much higher the peak is in feet from the next highest point
+
+-   **Isolation_mi** – the distance in miles from the nearest point of the same or higher elevation
+
+Load Libraries
+
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
+# load in libraries ----
+library(tidyverse)
+library(janitor)
+library(dplyr)
+library(ggplot2)
+library(maps)
+library(plotly)
+library(kableExtra)
+library(paletteer)
+library(maps)
+library(mapdata)
+library(ggmap)
+library(osmdata)
+library(grid)
+library(viridis)
+```
+
+Load in Data
+
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
+data_wd <- "/Users/oliviaholt/Documents/eds240/Holt-eds240-HW4/data"
+# import data ----
+fourteener_data <- read_csv(file.path(data_wd, "14er.csv"), show_col_types = FALSE)
+```
+
+Clean Data
+
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
+# clean data ----
+fourteener_clean <- fourteener_data %>% 
+  clean_names()
+
+# I want the difficulty class to be a value from 1 to 6 which I will change here
+
+fourteener_clean <- fourteener_clean %>%
+  mutate(
+    new_difficulty = case_when(
+      difficulty == "Class 1" ~ 1,
+      difficulty == "Class 2" ~ 2,
+      difficulty == "Hard Class 2" ~ 3,
+      difficulty == "Easy Class 3" ~ 4,
+      difficulty == "Class 3" | difficulty == "Hard Class 3" ~ 5,
+      difficulty == "Class 4" ~ 6,
+      TRUE ~ 20
+    )
+  )
+
+# I also want to arrange by descending order for taffic_high for viewing purposes
+fourteener_clean <- fourteener_clean %>% arrange(traffic_high)
+
+#grabbign the 20 most visited peaks into a subset
+fourteener_20 <- fourteener_clean %>% 
+  tail(20)
+```
+
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
+#BUBBLE PLOT
+
+# # Libraries
+# library(ggplot2)
+# library(dplyr)
+# library(hrbrthemes)
+# library(viridis)
+# 
+# # Most basic bubble plot
+# fourteener_clean %>%
+#   ggplot(aes(x=elevation_ft, y=traffic_high, size=new_difficulty, fill=difficulty)) +
+#     geom_point(alpha=0.5, shape=21, color="black") +
+#     scale_size(range = c(4, 16), name="") +
+#     scale_fill_viridis(discrete=TRUE, guide=FALSE, option="A") +
+#     theme_ipsum() +
+#     theme(legend.position="bottom") +
+#     ylab("Elevation (ft)") +
+#     xlab("Traffic (high)") +
+#     theme(legend.position = "none")
+# 
+# 
+# #put labels on most popular peaks
+```
+
+```{r}
+library(grid)
+library(tidyverse)
+
+#filter to show top 20 most visited peaks
+col_plot <- fourteener_clean %>%
+  tail(20) %>% 
+  ggplot() +
+  geom_col(aes(y = reorder(mountain_peak, traffic_high), #change into ascending order for mountain peak by traffic
+               x = traffic_high, fill = difficulty))+
+  xlab("High Traffic Estimate") +
+  ylab("")+
+  ggtitle(" ")+
+  #get rid of grey background, fill with white
+  theme(panel.background = element_rect(fill = "white"),
+        #creating horizontal axis grid lines
+        panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+        # Only left line of the vertical axis is painted in black
+        axis.line.y.left = element_line(color = "black"))+
+  scale_fill_paletteer_d("nationalparkcolors::CraterLake")+
+  labs(fill = "Difficulty Level")  # Change the legend title here
+
+col_plot
+
+ggsave("col_plot.png", plot = col_plot, device = "png", width = 8, height = 6)
+```
+
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
+
+# library(ggtern)
+# 
+# # Create a ternary plot
+# ternary_plot <- ggtern(data = fourteener_clean, aes(x = traffic_high,
+#                                                     y = elevation_gain_ft,
+#                                                     z = prominence_ft,
+#                                                     #size = distance_mi,
+#                                                     fill = new_difficulty)) +
+#   geom_point(alpha = 0.5, shape = 21, color = "black", size = 2) +
+#   scale_size(range = c(2, 8), name = "") +
+#   theme_ipsum() +
+#   theme(legend.position = "bottom") +
+#   ylab("Elevation Gain (ft)") +
+#   xlab("Traffic (high)")
+# 
+# # Print the ternary plot
+# ternary_plot
+```
+
+```{r}
+library(ggtern)
+
+# Create a ternary plot with specified axis limits
+ternary_plot2 <- ggtern(data = fourteener_clean, 
+                       aes(x = traffic_high,
+                           y = elevation_gain_ft,
+                           z = prominence_ft,
+                           fill = as.factor(new_difficulty))) +
+  
+  # Add points to the plot with specified attributes
+  geom_point(alpha = 0.5, shape = 21, color = "black", size = 4) +
+  
+  # Apply a theme to the plot
+  theme_bvbw() +
+  
+  # Adjust the legend position
+  theme(legend.position = "bottom",axis.title = element_text(size = 10)) +
+  
+  # Label the axes
+  ylab("Elevation Gain (ft)") +
+  xlab("Traffic") +
+  zlab("Prominence") +
+  
+  # Set the title of the plot
+  labs(title = " ")+
+  
+   # Customize the legend title and appearance
+   guides(fill = guide_legend(title = "New Difficulty")) +
+   theme(legend.key = element_rect(fill = "white", color = "white"),
+         legend.title = element_text(size = 10))+  # customizing legend box color
+   #Customize the legend title and appearance
+  
+  # Use scale_fill_manual to set custom colors for each difficulty level
+  scale_fill_manual(values = c("1" = "#7DCCD3FF", "2" = "#4E7147FF", 
+                               "3" = "#BE9C9DFF", "4" = "#F7ECD8FF",
+                               "5" = "#376597FF", "6" = "#9888A5FF"))
+
+# Print the ternary plot
+ternary_plot2
+
+
+#ggsave("tern_plot.png", plot = ternary_plot2, device = "png", width = 8, height = 6)
+
+```
+
+```{r warning=FALSE}
+#| warning: false
+#| error: false
+
+# load United States state map data
+MainStates <- map_data("state")
+st_CO <- MainStates %>% 
+  filter(region == "colorado")
+
+#using the OSM package to view the main roads in colorado
+big_streets <- getbb("Colorado United States")%>%
+  opq()%>%
+  add_osm_feature(key = "highway", 
+                  value = c("motorway", "primary", "motorway_link", "primary_link")) %>%
+  osmdata_sf()
+
+map_plot<-ggplot() + 
+  geom_polygon(data = st_CO, aes(x = long, y = lat, group = group),
+               color = "black", fill = "white")+
+  geom_point(data = fourteener_20,
+             aes(x = long, y = lat, fill = difficulty),
+             alpha = 0.5, shape = 24, color = "black", size = 5) +
+  scale_fill_viridis(discrete = TRUE, guide = "legend", option = "D") +
+  theme() +
+  ylab("Latitude") +
+  xlab("Longitude") +
+  ggtitle("Map of Colorado 14ner's by difficulty")+
+  geom_sf(data = big_streets$osm_lines, color = "black", alpha = 0.25) +
+  theme_minimal()+
+  labs()
+
+map_plot
+
+#find a way to point out the ten most visited peaks
+ggsave("map_plot.png", plot = map_plot, device = "png", width = 8, height = 6)
+```
+
+```{r}
+#| warning: false
+#| error: false
+
+# #BAR PLOT
+# 
+# # Libraries
+# library(ggplot2)
+# library(dplyr)
+# library(hrbrthemes)
+# library(viridis)
+# 
+# # Most basic bubble plot
+# bar_plot <- fourteener_clean %>%
+#   ggplot(aes(x=mountain_range)) +
+#     geom_bar(alpha=0.5, color="black") +
+#     theme_ipsum()+
+#     theme(legend.position="bottom") +
+#     xlab("Mountain Range") +
+#     theme(legend.position = "none")+
+#   ggtitle("Count of 14ner's in each mountain range")+
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# 
+# bar_plot
+# #group by mountain range and high traffic?
+# #group by mountain range and difficulty?
+# 
+# #ggsave("bar_plot.png", plot = bar_plot, device = "png", width = 8, height = 6)
+```
+
+```{r}
+scat_plot<- ggplot(data = subset(fourteener_clean, fourteener == "Y"),
+       aes(x = difficulty, y = traffic_high, color = elevation_gain_ft)) +
+  geom_point(size = 3) +
+  labs(title = "Traffic vs. Difficulty for Fourteeners",
+       x = "Difficulty",
+       y = "Traffic (High Estimate)") +
+  #scale_color_gradient(name = "Elevation Gain (ft)", low = "cornflowerblue", high = "yellow")
+  scale_color_viridis(discrete = FALSE, guide = "legend", option = "D")+
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+scat_plot
+```
+
+1.  clearly state your question(s):
+
+    My question is 'What makes a 14ner popular? with this dataset in particular I am looking at elevation, traffic (high), difficulty, mountain range.
+
+2.  describe your data (including your data source).
+
+    This tidy dataset is from Kaggle and it lists mountain peaks rising to an elevation greater than 14,000 ft (otherwise known as a fourteener) located in Colorado. Other than being 14,000 ft tall to be a 14ner, the prominence of that peak has to be at least 300 feet higher than the saddle that is connecting it to a neighboring peak.
+
+There are 58 peaks over 14,000 feet in Colorado and five of those peaks do not meet the prominence rule, but are in this dataset.
+
+3.  address your approach and decisions for each of the ten design elements listed above (though you are welcome and encouraged to comment on any others that are not explicitly listed). If your visualizations do not include and / or consider a listed element(s), please comment on why (it’s possible that not all will be applicable to your visualizations, but be sure to say why that is the case).
+
+Initially I anticipated that elevation/elevation gain, isolation, and difficulty would have the highest impact on traffic and therefore wanted to focus on those. In hindsight I wish I had found a data set that had the distances from each each to Denver as I think that would have a high impact on the popularity. From living in Colorado I remember Mt. Bierstadt being a popular peak because of its accessibility from Denver and it being the 'shortest' 14ner. This also made it the most accessible for people visiting from out of state as its closer to the airport in Denver and for people not use to the elevation. It also would have been interesting to look at trends for each season as not many people climb in the winter or fall.
+
+**Which option do you plan to pursue:** Option 2
+
+**Restate your question. Has this changed at all since HW #1:**
+
+What makes a 14ner the most popular (measured as high traffic)?
+
+**Explain which variables from your data set(s) you will use to answer your question(s):**
+
+traffic (high), elevation gain, prominence, distance, latitude, longitude, mtn range, mtn peak.
+
+```{r}
+# Libraries
+library(ggplot2)
+library(dplyr)
+ 
+# Get the world polygon and extract UK
+library(maps)
+library(mapdata)
+
+CO_map <- map_data("state") %>% filter(region=="CO")
+
+# Get a data frame with longitude, latitude, and size of bubbles (a bubble = a city)
+data <- world.cities %>% filter(country.etc=="UK")
+
+# Left chart
+ggplot() +
+  geom_polygon(data = UK, aes(x=long, y = lat, group = group), fill="grey", alpha=0.3) +
+  geom_point( data=data, aes(x=long, y=lat)) +
+  theme_void() + ylim(50,59) + coord_map() 
+ 
+# Second graphic with names of the 10 biggest cities
+library(ggrepel)
+ggplot() +
+  geom_polygon(data = UK, aes(x=long, y = lat, group = group), fill="grey", alpha=0.3) +
+  geom_point( data=data, aes(x=long, y=lat, alpha=pop)) +
+  geom_text_repel( data=data %>% arrange(pop) %>% tail(10), aes(x=long, y=lat, label=name), size=5) +
+  geom_point( data=data %>% arrange(pop) %>% tail(10), aes(x=long, y=lat), color="red", size=3) +
+  theme_void() + ylim(50,59) + coord_map() +
+  theme(legend.position="none")
+```
+
+```{r}
+# library(ggmap)
+# #citation("ggmap")
+# 
+# min(fourteener_clean$lat)
+# #37.1224
+# max(fourteener_clean$lat)
+# #40.255
+# 
+# min(fourteener_clean$long)
+# #-108.0053
+# max(fourteener_clean$long)
+# #-105.0442
+# 
+# mean(fourteener_clean$lat)
+# #38.59047
+# mean(fourteener_clean$long)
+# #-106.4821
+# 
+# get_googlemap(center = c(-106.4821, 38.59047), zoom = 15) %>% 
+#   ggmap() +
+#   geom_point(data = fourteener_clean, mapping = aes(x = lon, y = lat), color = "red") +
+#   geom_text(data = fourteener_clean, aes(label = name), angle = 60, hjust = 0, 
+#             color = "yellow", nudge_x = .0001, nudge_y = .0004, size = 4.5)
+```
