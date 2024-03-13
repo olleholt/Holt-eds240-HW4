@@ -24,29 +24,21 @@ A fourteener is a mountain peak with an elevation greater than 14,000 feet and a
 
 In Colorado, and in this dataset, there are 58 peaks over 14,000 feet. Although five of those peaks do not meet the prominence rule but are included in this dataset.
 
-**Parameters of interest marked with a \*:**
+**Parameters of interest:**
 
--   **Traffic High\*** – The high range of estimated visits in the year 2017
+-   **Traffic High** – The high range of estimated visits in the year 2017
 
--   **Lat\*** -The latitudinal coordinate in decimal form
+-   **Lat** -The latitudinal coordinate in decimal form
 
--   **Long\*** - The longitudinal coordinate in decimal form
+-   **Long** - The longitudinal coordinate in decimal form
 
 -   **Mountain Peak** – The name of the peak
 
--   **Mountain Range** – the name of the primary mountain range the peak is a member of
+-   **Elevation Gain_ft** – The elevation gain of the standard route in feet
 
--   **Elevation_ft** – The peak elevation in feet
-
--   **Distance_mi** – The distance of the standard route in miles
-
--   **Elevation Gain_ft\*** – The elevation gain of the standard route in feet
-
--   **Difficulty\*** – The Yosemite Decimal System difficulty rating, a value ranging from Class 1 (easiest) to Class 5 (most difficult)
+-   **Difficulty** – The Yosemite Decimal System difficulty rating, a value ranging from Class 1 (easiest), Class 2, Easy Class 3, Class 3, Hard Class3, to Class 4 (most difficult)
 
 -   **Prominence_ft\*** – How much higher the peak is in feet from the next highest point
-
--   **Isolation_mi** – the distance in miles from the nearest point of the same or higher elevation
 
 ```{r}
 #| warning: false
