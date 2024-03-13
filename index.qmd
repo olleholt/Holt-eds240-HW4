@@ -20,11 +20,11 @@ From Kaggle:
 
 This tidy dataset lists mountain peaks rising to an elevation greater than 14,000 ft (4,267 meters) located in the state of Colorado, USA.
 
-The term fourteener refers to mountain peaks with an elevation greater than 14,000 feet (4,267 meters) and a significant prominence. The prominence is generally agreed to be at least 300 feet higher than the saddle that connecting it to a neighboring peak.
+A fourteener is a mountain peak with an elevation greater than 14,000 feet and a significant prominence. The prominence has to be at least 300 feet higher than the saddle connecting it to a neighboring peak.
 
-In Colorado, and in this dataset, there are 58 peaks over 14,000 feet. Five of those peaks do not meet the prominence rule, so you can filter the list down to the commonly accepted list of 53 Colorado fourteeners.
+In Colorado, and in this dataset, there are 58 peaks over 14,000 feet. Although five of those peaks do not meet the prominence rule but are included in this dataset.
 
-**Parameters of interest:**
+**Parameters of interest marked with a \*:**
 
 -   **Traffic High\*** – The high range of estimated visits in the year 2017
 
@@ -40,11 +40,11 @@ In Colorado, and in this dataset, there are 58 peaks over 14,000 feet. Five of t
 
 -   **Distance_mi** – The distance of the standard route in miles
 
--   **Elevation Gain_ft** – The elevation gain of the standard route in feet
+-   **Elevation Gain_ft\*** – The elevation gain of the standard route in feet
 
--   **Difficulty** – The Yosemite Decimal System difficulty rating, a value ranging from Class 1 (easiest) to Class 5 (most difficult)
+-   **Difficulty\*** – The Yosemite Decimal System difficulty rating, a value ranging from Class 1 (easiest) to Class 5 (most difficult)
 
--   **Prominence_ft** – How much higher the peak is in feet from the next highest point
+-   **Prominence_ft\*** – How much higher the peak is in feet from the next highest point
 
 -   **Isolation_mi** – the distance in miles from the nearest point of the same or higher elevation
 
