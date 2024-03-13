@@ -94,12 +94,11 @@ fourteener_data <- read_csv(file.path(data_wd, "14er.csv"), show_col_types = FAL
 #| warning: false
 #| error: false
 
-# clean data ----
+# clean data names----
 fourteener_clean <- fourteener_data %>% 
   clean_names()
 
 # I want the difficulty class to be a value from 1 to 6 which I will change here
-
 fourteener_clean <- fourteener_clean %>%
   mutate(
     new_difficulty = case_when(
@@ -134,9 +133,9 @@ col_plot <- fourteener_clean %>%
   geom_col(aes(y = reorder(mountain_peak, traffic_high), #change into ascending order for mountain peak by traffic
                x = traffic_high, fill = difficulty))+
   xlab("Popularity by Traffic Estimate") +
-  ylab("")+
-  ggtitle(" ")+
-  #get rid of grey background, fill with white
+  ylab("")+ #empty ylabel
+  ggtitle(" ")+ #empty title
+  #get rid of grey background and fill with white
   theme(panel.background = element_rect(fill = "white"),
         #creating horizontal axis grid lines
         panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
@@ -167,9 +166,9 @@ tern_plot_0 <- ggtern(data = fourteener_clean,
                        aes(x = traffic_high,
                            y = elevation_gain_ft,
                            z = prominence_ft,
-                           fill = difficulty)) +
+                           fill = difficulty)) +#fill color by difficulty
   
-  # Add points to the plot with specified attributes
+  # Adding points to the plot with adjustements to transparancy, shape, color, size
   geom_point(alpha = 0.5, shape = 21, color = "black", size = 4) +
   
   # Apply a theme to the plot
@@ -178,21 +177,22 @@ tern_plot_0 <- ggtern(data = fourteener_clean,
   # Adjust the legend position
   theme(legend.position = "bottom",axis.title = element_text(size = 9)) +
   
-  # Label the axes
+  # Labeling the axes
   ylab("Elevation Gain (ft)") +
   xlab("Traffic") +
   zlab("Prominence") +
   
-  # Set the title of the plot
+  # Setting the title of the plot as empty
   labs(title = " ")+
   
-   # Customize the legend title and appearance
-   guides(fill = guide_legend(title = "Difficulty Level")) +
-   theme(legend.key = element_rect(fill = "white", color = "white"),
+   # Customizing the legend title and appearance
+   guides(fill = guide_legend(title = "Difficulty Level")) + #legend title
+   theme(legend.key = element_rect(fill = "white", color = "white"), #background color
          legend.title = element_text(size = 10))+  # customizing legend box color
    #Customize the legend title and appearance
   
   # Use scale_fill_manual to set custom colors for each difficulty level
+  #based off of the CraterLake color palette colors
   scale_fill_manual(values = c("Class 1" = "#7DCCD3FF", "Class 2" = "#4E7147FF", 
                                "Easy Class 3" = "#BE9C9DFF", "Class 3" = "#F7ECD8FF",
                                "Hard Class 3" = "#376597FF", "Class 4" = "#9888A5FF"))
@@ -202,7 +202,7 @@ tern_plot_0 <- ggtern(data = fourteener_clean,
 ```{r}
 
 # a subset plot to only look at the 20 most popular 14ner in 2017
-# Create a ternary plot with specified axis limits
+# Creating a ternary plot
 tern_plot <- ggtern(data = fourteener_20, 
                        aes(x = traffic_high,
                            y = elevation_gain_ft,
@@ -223,7 +223,7 @@ tern_plot <- ggtern(data = fourteener_20,
   xlab("Traffic") +
   zlab("Prominence") +
   
-  # Set the title of the plot
+  # Set the title of the plot as empty
   labs(title = " ")+
   
    # Customize the legend title and appearance
@@ -232,7 +232,7 @@ tern_plot <- ggtern(data = fourteener_20,
          legend.title = element_text(size = 10))+  # customizing legend box color
    #Customize the legend title and appearance
   
-  # Use scale_fill_manual to set custom colors for each difficulty level
+  # Using scale_fill_manual to set custom colors for each difficulty level
   scale_fill_manual(values = c("Class 1" = "#7DCCD3FF", "Class 2" = "#4E7147FF", 
                                "Easy Class 3" = "#BE9C9DFF", "Class 3" = "#F7ECD8FF",
                                "Hard Class 3" = "#376597FF", "Class 4" = "#9888A5FF"))
@@ -245,9 +245,9 @@ tern_plot <- ggtern(data = fourteener_20,
 # Add points to show where the other 38 fourteeners are
 #focus on most popular 20
 tern_plot_2 <- tern_plot +
-  geom_point(data = fourteener_clean, alpha = 0.5, shape = 1, color = "black", size = 4, family = "Arial")
+  geom_point(data = fourteener_clean, alpha = 0.5, shape = 1, color = "black", size = 4, family = "Arial") # changing transparancy, shape, color, size and font
 
-tern_plot_2
+tern_plot_2 #printing plot
 
 ggsave("tern_plot_2.png", plot = tern_plot_2, device = "png", width = 8, height = 6)
 ```
@@ -260,7 +260,7 @@ Note: I used the OSM package to plot major highways but could not render with it
 #| warning: false
 #| error: false
 
-# load United States state map data
+# load United States state map data from map_data package
 MainStates <- map_data("state")
 st_CO <- MainStates %>% 
   filter(region == "colorado")
@@ -277,7 +277,7 @@ st_CO <- MainStates %>%
 #| warning: false
 #| error: false
 
-# Filter the mt. bierstadt in the dataset
+# Filter the mt. bierstadt in the dataset (most visited)
 mt_bierstadt <- tail(fourteener_20, 1)
 
 map_plot_2 <- ggplot() + 
@@ -288,16 +288,16 @@ map_plot_2 <- ggplot() +
              aes(x = long, y = lat, fill = difficulty),
              alpha = 0.8, shape = 24, color = "black", size = 5) +
   geom_label(data = mt_bierstadt,
-             aes(x = long + 0.1, y = lat + 0.1, label = mountain_peak),
+             aes(x = long + 0.1, y = lat + 0.1, label = mountain_peak),#labeling the Mt. Bierstadt
              vjust = 1.5, size = 3, color = "black",
              label.padding = unit(0.15, "lines"),  # Adjust label padding
              label.r = unit(0.15, "lines"),         # Adjust label radius
-             label.size = 0.25,
-             nudge_x = 2.5,  # Nudge the labels to the right
-             nudge_y = -1) +  # Nudge the labels upward)
+             label.size = 0.25,#adjusting label size
+             nudge_x = 2.5,  # Nudging the labels to the right
+             nudge_y = -1) +  # Nudging the labels up
   geom_segment(data = mt_bierstadt,
-               aes(x = long, y = lat, xend = long + 2.5, yend = lat + -1),
-               color = "black", size = 0.5, alpha = 1, lineend = "round") +  # Add connecting line to mt bierstadt
+               aes(x = long, y = lat, xend = long + 2.5, yend = lat + -1),# adjusting the location of the text box label for Mt. Biestadt
+               color = "black", size = 0.5, alpha = 1, lineend = "round") +  # Adding connecting line to mt bierstadt
   scale_fill_paletteer_d("nationalparkcolors::CraterLake", name = "Difficulty Level") +
   labs(title = "") +  # Empty title
   theme(axis.title.x = element_blank(),  # Remove x-axis title
@@ -306,7 +306,7 @@ map_plot_2 <- ggplot() +
         axis.text.y = element_blank(),   # Remove y-axis labels
         axis.ticks.x = element_blank(),   # Remove x-axis ticks
         axis.ticks.y = element_blank())+   # Remove y-axis ticks
-  theme_void()
+  theme_void()# changing theme to void
 
 ```
 
@@ -322,7 +322,7 @@ denver_long <- -104.991531
 map_plot_den <- map_plot_2 +
   geom_point(data = data.frame(lon = denver_long, lat = denver_lat), 
              aes(x = lon, y = lat, color = "Denver"), size = 2) +
-  scale_color_manual(values = "red", name = "City")
+  scale_color_manual(values = "red", name = "City") #Using a red dot to pinpoint Denver
 
 # Print the plot
 map_plot_den
