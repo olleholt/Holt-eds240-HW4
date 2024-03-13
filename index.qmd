@@ -38,7 +38,7 @@ In Colorado, and in this dataset, there are 58 peaks over 14,000 feet. Although 
 
 -   **Difficulty** – The Yosemite Decimal System difficulty rating, a value ranging from Class 1 (easiest), Class 2, Easy Class 3, Class 3, Hard Class3, to Class 4 (most difficult)
 
--   **Prominence_ft\*** – How much higher the peak is in feet from the next highest point
+-   **Prominence_ft** – How much higher the peak is in feet from the next highest point
 
 ```{r}
 #| warning: false
