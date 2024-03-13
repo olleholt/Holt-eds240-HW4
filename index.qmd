@@ -151,9 +151,9 @@ col_plot <- fourteener_clean %>%
         # Only left line of the vertical axis is painted in black
         axis.line.y.left = element_line(color = "black"),
         # increase font size for x and y-axis labels
-        axis.text.x = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
-        axis.title.x = element_text(size = 14))+
+        axis.text.x = element_text(size = 12, family = "Arial"),
+        axis.text.y = element_text(size = 12, family = "Arial"),
+        axis.title.x = element_text(size = 14,family = "Arial"))+
   scale_fill_paletteer_d("nationalparkcolors::CraterLake")+
   labs(fill = "Difficulty Level")  # Change the legend title here
 
@@ -261,7 +261,7 @@ tern_plot <- ggtern(data = fourteener_20,
 
 # Add points to show where the other 38 fourteeners are
 tern_plot_2 <- tern_plot +
-  geom_point(data = fourteener_clean, alpha = 0.5, shape = 1, color = "black", size = 4)
+  geom_point(data = fourteener_clean, alpha = 0.5, shape = 1, color = "black", size = 4, family = "Arial")
 
 tern_plot_2
 
@@ -418,6 +418,10 @@ My question is 'What makes a fourteener (14ner) the most popular’? With this d
 
 This tidy dataset is from Kaggle and it lists mountain peaks rising to an elevation greater than 14,000 ft (otherwise known as a fourteener) located in Colorado. Other than being 14,000 ft tall to be a 14ner, the prominence of the peak has to be at least 300 feet higher than the saddle that is connecting it to a neighboring peak. There are 58 peaks over 14,000 feet in Colorado and five of those peaks do not meet the prominence rule, but are included in this dataset. The dataset did not need much cleaning and wrangling except for some subsetting, arranging, and renaming.
 
-Initially, I anticipated that elevation/elevation gain, isolation, and difficulty level would have the highest impact on traffic estimates and therefore wanted to focus on those. In hindsight I wish I had found a data set that had the distances from each to Denver as I think that would have a high impact on the popularity. From living in Colorado I remember Mt. Bierstadt being a popular peak because of its accessibility from Denver and it being the 'shortest' 14ner. This also made it the most accessible for people visiting from out of state as it is closer to the airport in Denver and for people not used to the elevation. It also would have been interesting to look at trends for each season as not many people climb in the winter or fall.
+Initially, I anticipated that elevation/elevation gain and difficulty level would have the highest impact on traffic estimates and therefore wanted to focus on those. In hindsight I wish I had found a data set that had the distances from each to Denver as I think that would have a high impact on the popularity. From living in Colorado I remember Mt. Bierstadt being a popular peak because of its accessibility from Denver and it being the 'shortest' 14ner. This also made it the most accessible for people visiting from out of state as it is closer to the airport in Denver and for people not used to the elevation. It also would have been interesting to look at trends for each season as not many people climb in the winter or fall.
 
 Mt. Bierstadt did prove to be the most popular 14ner to climb in 2017 according to the high traffic estimate. When looking at the 20 most popular 14ner’s in 2017 they were all below the ‘Hard Class 3’ difficulty range according to the bar plot. Most of them were close together and closer to Denver, except for Handles peak in the southwest region of Colorado according to the map plot. And compared to the other 14ner’s, they had less elevation gain on the hike according to the ternary plot.
+
+A column plot, map, and ternary plot were used to visualize this dataset. These plots were selected because it is important to see where the peaks are located in relation to each other and in relation to major cities (Denver). The bar plot is an easy to read visual representation to view high traffic for each 14ner. I chose to do a ternary plot as well because I wanted to try an advanced plot.
+
+The titles and axis labels were changed for all of the plots along with an annotation and the axis tick changes on the map. The themes and palettes were changed to match so I only had to have one legend on the infographic and it would be easier to interpret all the plots together. The color palette I chose was a national park themed for crater lake. I tried to keep the plots as simple as possible so there wasn’t too much repeating information on the infographic. My primary message was to look at difficulty and elevation gain for the most popular hikes and I found that the hikes that were of lower elevation and lower difficulty were more popular. This makes sense to me because they are more accessible for a larger group of people. The plots I made were for a general audience and I think they would be understood by most people. I added the theme_bvbw() so that the ternary plot would be easier to read with added arrows to signify the direction of each variable's proportions.
